@@ -1,0 +1,144 @@
+Module Federation的原理主要是基于webpack5提供的一个新特性，通过webpack原生提供的ModuleFederationPlugin插件来实现。它允许JavaScript应用程序动态地从其他构建的代码中加载代码，从而在不同的前端应用之间共享模块。即便这些应用是独立构建的，也能够共享和使用彼此的代码。
+
+具体来说，Module Federation将单独打包的JS放在一个统一的地方，通过Module Federation插件进行引用。这些独立的构建之间不应该有相互依赖，以便它们可以单独开发和部署。由于所有公共组件库都放在同一个地方，所以当改动公共组件库时，所有依赖该组件库的服务的组件都会自动更新，无需每个服务都重新更新依赖和重新构建。
+
+在微前端架构中，每个前端应用通常是一个独立的微服务，它们可以组合在一起形成一个完整的用户界面。Module Federation允许不同团队独立部署和更新各自负责的前端应用，同时保持它们之间的接口一致性和能够互相通信。
+
+总的来说，Module Federation的原理在于实现跨应用的代码共享，提高开发效率，促进团队协作，使得大型分布式应用程序的构建和维护变得更加容易。
+
+
+Module Federation的优点主要有以下几点：
+
+代码共享和复用：它允许不同的前端应用之间共享和复用模块，使得开发者可以更加高效地使用和维护代码，避免重复造轮子。
+独立开发和部署：使用Module Federation，各个前端应用可以独立进行开发和部署，这大大提高了团队协作的效率，同时也使得应用更新和升级更加灵活和便捷。
+减少构建和维护成本：通过共享模块，可以避免多次构建和维护相同的代码，降低了构建和维护的成本。
+然而，Module Federation也存在一些缺点：
+
+学习成本高：Module Federation作为一个相对较新的特性，其使用和配置可能需要开发者花费一定的时间来学习和掌握。
+依赖管理复杂：在多个应用之间共享模块时，依赖管理可能会变得复杂。需要确保所有应用都使用相同版本的共享模块，以避免版本冲突和兼容性问题。
+调试和排错困难：当多个应用共享相同的模块时，如果出现问题，可能需要跨多个应用进行调试和排错，这可能会增加解决问题的难度。
+综上所述，Module Federation虽然带来了很多优点，但在使用时也需要注意其可能带来的问题，并结合实际项目需求进行权衡和选择。
+
+
+“Good frontend development is hard. Scaling frontend development so that many teams can work simultaneously on a large and complex product is even harder.” Martin Fowler
+
+--------------------
+
+webpack是一个现代JavaScript应用程序的静态模块打包器(module bundler)。它用于将项目中的各个模块（包括JavaScript、CSS、图片等）进行打包，并生成一个或多个bundle，供浏览器加载和执行。webpack通过构建一个依赖图(dependency graph)来映射项目所需的每个模块，并根据这个依赖图进行打包。
+
+使用方法：
+
+安装Node.js，因为webpack是用Node.js编写的，并依赖Node.js的运行环境。
+安装webpack，通常我们会将webpack安装到项目的依赖中，这样就可以使用项目本地版本的webpack。
+配置webpack，通过webpack.config.js文件来定义入口文件、输出路径、加载器(loader)和插件等。
+运行webpack，通过命令行或npm脚本来执行webpack，进行打包。
+优点：
+
+模块化开发：webpack支持所有资源都进行模块化，使得管理、迁移和开发都更为方便。
+语法编译：webpack可以很方便地将浏览器不支持的语法（如ES6、JSX等）通过其他loader进行按需编译和预处理。
+社区完善：webpack有丰富的插件和强大的扩展能力，还支持用户自己编写插件和loader。
+项目优化：webpack提供了多种优化手段，如动态打包、代码分离、按需加载、代码压缩、静态资源压缩、缓存配置等。
+缺点：
+
+配置繁琐：webpack的配置相对较为复杂，对于初学者来说可能需要一定的时间来熟悉和掌握。
+打包速度：对于大型项目，webpack的打包速度可能会较慢。
+对服务端渲染不友好：webpack主要针对的是客户端的JavaScript应用程序，对于服务端渲染的支持可能不够友好。
+总的来说，webpack是一个强大的模块打包工具，它能够帮助开发者更高效地管理和优化JavaScript应用程序。但是，它也有其局限性，需要根据项目实际需求来选择合适的打包工具。
+
+
+1.4 Module Federation 的缺点
+1. 对环境要求略高，需要使用 webpack5，旧项目改造成本大。
+2. 对代码封闭性高的项目，依旧需要做npm那一套管理和额外的拉取代码，还不如npm复用方便。
+3. 拆分粒度需要权衡,虽然能做到依赖共享，但是被共享的lib不能做tree-shaking，也就是说如果共享了一个lodash，那么整个lodash库都会被打包到shared-chunk中。虽然依赖共享能解决传统微前端的externals的版本一致性问题。
+4. webpack为了支持加载remote模块对runtime做了大量改造，在运行时要做的事情也因此陡然增加，可能会对我们页面的运行时性能造成负面影响。
+5. 运行时共享也是一把双刃剑，如何去做版本控制以及控制共享模块的影响是需要去考虑的问题。
+6. 远程模块 typing 的问题。
+
+
+------------------
+
+
+npx create-react-app container
+npm install webpack webpack-cli webpack-server html-webpack-plugin
+npm install webpack webpack-cli webpack-server html-webpack-plugin webpack-dev-server
+
+
+------------------
+Create a boundle:
+
+touch webpack.config.js
+
+npm webpack
+
+https://medium.com/nerd-for-tech/micro-front-ends-hands-on-project-63bd3327e162
+
+
+----------------------------------------
+It first called main.js on http://localhost:8080/main.js . This is the container
+Called the remoteEntry.js on http://localhost:8081/remoteEntry.js . This is micro-front-end-1
+Back again to the container calling bootstrap
+finally calling src_index_js.js from micro-front-end-1 (index.js) to present its output on the screen
+All of this came from the ModuleFederationPlugin
+
+Module Federation Plugin allowed JavaScript to dynamically import code from micro-front-end-1 into the container at runtime.
+
+
+---------------------------------------
+why micro-front end:
+https://www.linkedin.com/pulse/micro-frontends-what-why-how-rany-elhousieny-phd%E1%B4%AC%E1%B4%AE%E1%B4%B0?source=post_page-----63bd3327e162--------------------------------
+
+
+Why Micro Frontends?
+The Micro-Frontends architecture was introduced to solve multiple issues with the current SPA frontend development. I experienced the growth of a website to the limit that it becomes very hard to scale, modify, or even train new engineers to be part of it. With such a monolithic system, developers will be blocked on each other to just apply a small change. Here are some of the benefits of Micro-Frontends:
+
+
+Team Scalability: Multiple teams can work independently to contribute to multiple systems. This allows us to divide the work and scale it through multiple teams.
+Single responsibility: This Will allow each team to build components with a single responsibility. The hosting team can focus on analytics, performance and each feature team can focus on customers. Both teams can work 100% on their particular areas. The host page team can focus 100% on creating a great host page. Each Micro Frontend team will focus 100% on the functionality of their Micro Frontend.
+Reusability: We will be able to use code in multiple places. One component will be built and deployed and different teams can re-use it.
+Technology agnosticism: Micro Frontends architecture is independent of technology. You can use components from different technology (JavaScript, React, Vue, Angular ...). You do not have to worry about deploying or building them.
+Learning Curve: For new engineers joining the teams, it is easier to learn smaller apps than understanding a monolith with thousands of lines of code.
+Domain-Driven Architecture:
+No alt text provided for this image
+One of the main reasons behind inventing both Micro-Frontends and Microservices is allowing vertical domain ownership. Moving from a monolith architecture that is owned by the entire company to Microservices that are owned by multiple teams, helped companies to scale the development among different teams and promote ownership of the backend. However, the frontends stayed as a big monolith that has dependencies on multiple teams. With Micro-Frontends, each vertical domain owns a component end to end, vertically, which aligns with our latest org structure.
+
+
+
+--------------------------------
+AI: Module Federation 做micro-frontend 服务之间如何相互操作和共享数据
+
+Module Federation 在实现 micro-frontend 服务之间的相互操作和共享数据时，主要依赖于其核心概念，即 Container 和 Shared。
+
+首先，每个使用 ModuleFederationPlugin 构建的应用都可以被视为一个 Container。Container 的核心功能是加载和被其他 Container 加载。这意味着，各个 micro-frontend 服务可以作为独立的 Container 存在，并通过 Module Federation 机制相互加载和集成。这种架构允许服务之间实现松耦合，每个服务都可以独立开发、测试和部署，同时又能够与其他服务协同工作。
+
+其次，Shared 机制使得模块之间的依赖可以共享。在 micro-frontend 的场景中，这意味着各个服务可以共享公共的库、框架或其他依赖。通过共享依赖，可以显著减少应用的总体积，提高加载速度，并降低维护成本。例如，一个服务可以将自己的依赖（如 react、react-dom、mobx 等）共享出去，其他服务则可以直接使用这些共享作用域中的依赖，而无需重复引入。
+
+在具体实现上，服务之间可以通过定义明确的接口或事件来进行通信。例如，一个服务可以暴露某些 API 或事件，其他服务可以通过这些接口进行数据请求或监听事件。同时，由于 Module Federation 支持动态加载，服务之间也可以按需加载对方的模块或组件，实现更灵活的功能集成。
+
+总的来说，Module Federation 通过 Container 和 Shared 的核心概念，为 micro-frontend 服务之间的相互操作和共享数据提供了有力的支持。这使得各个服务能够保持独立性和可维护性，同时又能够实现高效的协作和集成。
+
+Module Federation 做micro-frontend 服务之间组件如何交互:
+
+Module Federation在micro-frontend架构中，为服务之间的组件交互提供了有效的机制。以下是Module Federation如何实现micro-frontend服务之间组件交互的简述：
+
+1. 组件共享与异步加载：在Module Federation中，一个应用可以引入另一个应用的模块。这意味着，各个micro-frontend服务可以异步获取并使用其他服务的组件。例如，服务A可以引用服务B中的某个组件，并将其集成到自己的界面中。这种机制允许开发者将应用拆分为更小的模块或组件块，并根据需要进行动态加载。
+
+2. 容器（Container）与主机（Host）：在Module Federation中，每个应用或服务都被视为一个容器（Container）。容器可以加载其他容器，也可以被其他容器加载。从消费者的角度来看，加载其他容器的容器被称为主机（Host），而被加载的容器则被称为远程（Remote）。主机可以动态加载并运行远程的代码，而远程则负责暴露其组件、属性、方法或功能供主机使用。
+
+3. 接口定义与事件通信：为了实现组件之间的交互，服务之间需要定义清晰的接口和事件通信机制。这可以通过定义API、使用事件总线（Event Bus）或自定义事件等方式实现。服务A中的组件可以暴露某些API供其他服务调用，同时也可以通过监听或触发事件来与其他服务进行通信。
+
+4. 依赖管理与版本控制：在micro-frontend架构中，确保不同服务之间依赖的一致性是非常重要的。Module Federation允许服务共享依赖，这有助于减少总体积和加载时间。然而，这也要求开发者对依赖进行仔细的管理，确保所有服务都使用兼容的版本。
+
+5. 调试与监控：由于micro-frontend架构的复杂性，调试和监控组件交互可能是一个挑战。因此，使用适当的工具和策略来监控组件的状态、通信和性能是非常重要的。
+
+综上所述，Module Federation通过异步加载、容器与主机的概念以及清晰的接口定义和事件通信机制，为micro-frontend服务之间的组件交互提供了强大的支持。然而，实现有效的组件交互还需要开发者对架构、依赖管理和调试策略有深入的了解和实践经验。
+
+
+---------------
+
+https://developer.aliyun.com/article/1248206
+
+https://blog.towavephone.com/module-federation-principle-research/
+
+
+
+
