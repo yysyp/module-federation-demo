@@ -19,7 +19,7 @@ const RemoteWrapper = ({ children }) => (
 );
 
 const handleClick = (e) => {
-  console.log('Clicked');
+  console.log('Clicked: ' + e);
 };
 
 export const App = () => (
@@ -34,7 +34,7 @@ export const App = () => (
     </RemoteWrapper>
     <h2>Remote Button:</h2>
    <RemoteWrapper>
-      <RemoteButton value={4} context={GlobalContext} />
+      <RemoteButton value={4} context={GlobalContext} func={handleClick}/>
     </RemoteWrapper>
     <br />
     <a href="http://localhost:4000">Link to Remote App</a>

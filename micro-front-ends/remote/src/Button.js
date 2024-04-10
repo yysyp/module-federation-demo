@@ -8,7 +8,9 @@ function Button(props) {
   return (
     <div>
       RemoteButton get data:{JSON.stringify(name)}
-      <button onClick={(e)=>{setResult(props.value * 2); setName("new-name-by-remote-button");}}>Remote1Button</button>
+      <button onClick={(e)=>{setResult(props.value * 2); setName("new-name-by-remote-button"); if (props.func) {
+        props.func("callback from remote button");
+      }}}>Remote1Button</button>
       <br/><span>count: {count}</span>
       <br/><span>result: {result}</span>
     </div>
