@@ -1,16 +1,16 @@
 import React, { useState, useContext } from "react";
 
-import { GlobalContext } from "./App.js";
-
 function Button(props) {
+  const { count, setCount } = useContext(props.context);
+  const { name, setName } = useContext(props.context);
   const [result, setResult] = useState(null);
 
-  const gContext = useContext(GlobalContext);
   return (
     <div>
-      RemoteButton get data:{JSON.stringify(gContext)}
-      <button onClick={(e)=>{setResult(props.value * 2)}}>Remote1Button</button>
-      <span>{result}</span>
+      RemoteButton get data:{JSON.stringify(name)}
+      <button onClick={(e)=>{setResult(props.value * 2); setName("new-name-by-remote-button");}}>Remote1Button</button>
+      <br/><span>count: {count}</span>
+      <br/><span>result: {result}</span>
     </div>
   );
 }
