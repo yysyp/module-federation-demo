@@ -13,6 +13,7 @@
   },
   "scripts": {
     "start": "webpack serve",
+    "build": "webpack",
     "cleanup": "rm -rf node_modules"
   },
   "eslintConfig": {

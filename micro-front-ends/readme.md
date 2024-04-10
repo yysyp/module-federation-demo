@@ -15,3 +15,6 @@ https://blog.bitsrc.io/how-to-share-state-between-react-micro-frontends-using-mo
 https://bit.cloud/learnbit-react/sharing-state-mfe/remote-mfe/message-bus
 
 
+issues and solution:
+https://blog.csdn.net/mjzhang1993/article/details/115871597
+
